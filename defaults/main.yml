@@ -1,0 +1,92 @@
+---
+# Directory to store configuration files.
+mongodb_conf_dir: /etc/mongodb
+
+# :storage.dbPath:
+# Directory to store database files.
+mongodb_data_dir: /var/lib/mongodb
+
+# :storage.smallFiles:
+# Whether to use a smaller default file size. This option reduces the initial
+# size for data files and limits the maximum size to 512 MiB. Also reduces the
+# size of each journal file from 1 GiB to 128 MiB.
+# See http://docs.mongodb.org/manual/reference/configuration-options/#storage.smallFiles.
+mongodb_smallfiles_enabled: true
+
+#
+# Logging
+#
+
+# :systemLog.destination:
+# Specify either 'file', or 'syslog'.
+mongodb_log_destination: 'file'
+
+# Directory to store logs. Used only when mongodb_log_destination is 'file'.
+mongodb_log_dir: /var/log/mongodb
+
+# :systemLog.quiet:
+# Whether to run in a quiet mode that attempts to limit the amount of output.
+mongodb_log_quiet: false
+
+#
+# Network
+#
+
+# :net.port:
+# Specifies the TCP port on which the MongoDB instance listens for client
+# connections.
+mongodb_port: 27017
+
+# :net.bindIp:
+# Specifies the comma-separated IP address(es) that mongos/mongod binds to in
+# order to listen for connections from applications.
+mongodb_bindip: 0.0.0.0
+
+# :net.ipv6:
+# Whether to enable IPv6 support.
+mongodb_ipv6_enabled: false
+
+#
+# Replica set
+#
+
+# Whether to setup a replica set.
+mongodb_replset_enabled: false
+
+# :replication.replSetName:
+# Specifies a replica set name.
+mongodb_replset_name: rs0
+
+# List of replica set members; values must be in form <hostname>[:<port>].
+# Hostnames must be the same as used in inventory.
+# Example: ['mango0', 'mango1:27010']
+mongodb_replset_servers: []
+
+# :replication.oplogSizeMB:
+# Specifies a maximum size in MiB for the replication operation log (i.e.
+# the oplog). Once the mongod has created the oplog for the first time,
+# changing this option will not affect the size of the oplog.
+mongodb_replset_oplog_size: 128
+
+#
+# Authorization
+#
+
+# :security.authorization:
+# Whether to enable Role-Based Access Control (RBAC) to govern each user's
+# access to database resources and operations.
+mongodb_authz_enabled: false
+
+# Name of the admin user with superuser (root) privileges.
+mongodb_root_user: admin
+
+# Password of the admin user with superuser (root) privileges.
+mongodb_root_password: top-secret
+
+# The shared secret that MongoDB processes use to authenticate to each other in
+# a sharded cluster or replica set.
+mongodb_replset_key:
+
+# :security.keyFile:
+# Path of the file where to store {{mongodb_replset_key}}.
+mongodb_authz_keyfile: "{{ mongodb_conf_dir }}/mongodb.key"

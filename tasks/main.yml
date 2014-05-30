@@ -1,0 +1,15 @@
+---
+- include: install.yml tags=install
+- include: config.yml tags=config
+
+- name: enable and start mongodb
+  service: name=mongodb enabled=true state=started
+  tags: services
+
+- name: setup replica set
+  include: setup_replset.yml tags=replica_set,setup
+  when: (mongodb_replset_enabled and _is_first_member_) | bool
+
+- name: setup user accounts
+  include: setup_users.yml tags=accounts,users
+  when: (mongodb_authz_enabled and (not mongodb_replset_enabled or _is_first_member_)) | bool

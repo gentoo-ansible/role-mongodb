@@ -1,0 +1,43 @@
+---
+  # note: use newest pymongo version
+- name: install packages
+  portage: package={{ item }}
+  with_items:
+    - dev-db/mongodb
+    - dev-python/pymongo
+  tags: packages
+
+  # see http://kb.nocproject.org/pages/viewpage.action?pageId=3604535
+- name: disable MPROTECT for mongo client (temporary workaround!)
+  shell: >
+    hash /sbin/paxctl && paxctl -m /usr/bin/mongo
+  failed_when: false
+  changed_when: false
+
+- name: create conf directory
+  file: >
+    path={{ mongodb_conf_dir }}
+    state=directory
+    owner=root group=root mode=0755
+
+- name: create data directory
+  file: >
+    path={{ mongodb_data_dir }}
+    state=directory
+    owner=mongodb group=mongodb mode=0700
+
+- name: create logs directory
+  file: >
+    path={{ mongodb_log_dir }}
+    state=directory
+    owner=mongodb group=mongodb mode=0750
+  when: mongodb_log_destination == 'file'
+
+- name: remove default config files
+  file: >
+    path=/etc/{{ item }}
+    state=absent
+  with_items:
+    - mongodb.conf
+    - mongos.conf
+  when: mongodb_conf_dir != '/etc'

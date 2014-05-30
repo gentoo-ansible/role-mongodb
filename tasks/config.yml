@@ -1,0 +1,21 @@
+---
+- name: configure mongodb.conf
+  template: >
+    src=mongodb.conf.j2
+    dest={{ mongodb_conf_dir }}/mongodb.conf
+    owner=root group=root mode=0644
+  notify: restart mongodb
+
+- name: configure mongodb init script
+  template: >
+    src=mongodb.confd.j2
+    dest=/etc/conf.d/mongodb
+    owner=root group=root mode=0644
+  notify: restart mongodb
+
+- name: store shared key of replica set in keyFile
+  copy: >
+    dest={{ mongodb_authz_keyfile }}
+    content={{ mongodb_replset_key | mandatory }}\\n
+    owner=mongodb group=mongodb mode=0600
+  when: mongodb_authz_enabled and mongodb_replset_enabled

@@ -1,0 +1,11 @@
+---
+- name: wait until MongoDB starts
+  wait_for: port={{ mongodb_port }}
+
+- name: create superadmin user
+  mongodb_user: >
+    database=admin
+    name={{ mongodb_root_user }}
+    password={{ mongodb_root_password }}
+    roles='root'
+    replica_set={{ mongodb_replset_name if mongodb_replset_enabled | bool else '' }}

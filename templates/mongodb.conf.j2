@@ -1,0 +1,51 @@
+{% macro bool(value) -%}
+{{ 'true' if value | bool else 'false' }}
+{%- endmacro %}
+# {{ ansible_managed }}
+#
+# This file uses the YAML format as described in the documentation:
+#   http://docs.mongodb.org/manual/reference/configuration-options/
+
+systemLog:
+  destination: {{ mongodb_log_destination }}
+{% if mongodb_log_destination != 'syslog' %}
+  path: "{{ mongodb_log_dir }}/mongodb.log"
+{% endif %}
+  quiet: {{ bool( mongodb_log_quiet ) }}
+  logAppend: true
+
+net:
+  port: {{ mongodb_port }}
+  bindIp: {{ mongodb_bindip }}
+  ipv6: {{ bool( mongodb_ipv6_enabled ) }}
+  ssl:
+    mode: disabled
+  http:
+    enabled: false
+
+security:
+  authorization: {{ 'enabled' if mongodb_authz_enabled | bool else 'disabled' }}
+{% if mongodb_replset_enabled %}
+  clusterAuthMode: keyFile
+  keyFile: "{{ mongodb_authz_keyfile }}"
+{% endif %}
+
+storage:
+  dbPath: "{{ mongodb_data_dir }}"
+  directoryPerDB: true
+  smallFiles: {{ bool( mongodb_smallfiles_enabled ) }}
+  journal:
+    enabled: true
+
+{% if mongodb_replset_enabled %}
+replication:
+  oplogSizeMB: {{ mongodb_replset_oplog_size }}
+  replSetName: "{{ mongodb_replset_name }}"
+{% endif %}
+
+# Specifies one of the MongoDB parameters described here:
+#   http://docs.mongodb.org/manual/reference/parameters/
+#
+# You can specify multiple setParameter fields such as:
+#   setParameter: {enableTestCommands: 1}
+#setParameter:

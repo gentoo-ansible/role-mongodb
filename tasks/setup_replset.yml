@@ -1,0 +1,19 @@
+---
+- name: wait for all MongoDB nodes to become available
+  wait_for: >
+    host={{ item.split(':')[0] }}
+    port={{ item.split(':')[1] | default(27017) }}
+    timeout=300
+  with_items: mongodb_replset_servers
+
+- name: initiate or extend replica set
+  mongodb_replset: >
+    user={{ mongodb_root_user }}
+    password={{ mongodb_root_password }}
+    replset={{ mongodb_replset_name }}
+    hosts={{ mongodb_replset_servers | join(',') }}
+  register: replset_result
+
+- name: give MongoDB few seconds to initiate replica set
+  pause: seconds=15
+  when: mongodb_authz_enabled and replset_result|changed

@@ -1,0 +1,2 @@
+---
+_is_first_member_: "{{ mongodb_replset_servers[0].split(':')[0] == inventory_hostname }}"

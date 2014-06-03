@@ -81,7 +81,7 @@ mongodb_authz_enabled: false
 mongodb_root_user: admin
 
 # Password of the admin user with superuser (root) privileges.
-mongodb_root_password: top-secret
+mongodb_root_password:
 
 # The shared secret that MongoDB processes use to authenticate to each other in
 # a sharded cluster or replica set.
@@ -90,3 +90,8 @@ mongodb_replset_key:
 # :security.keyFile:
 # Path of the file where to store {{mongodb_replset_key}}.
 mongodb_authz_keyfile: "{{ mongodb_conf_dir }}/mongodb.key"
+
+
+# ! DO NOT CHANGE THIS !
+# It doesn't work when in /vars, so it must be here.
+_is_first_member_: "{{ mongodb_replset_servers[0].split(':')[0] == inventory_hostname }}"

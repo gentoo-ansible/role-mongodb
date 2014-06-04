@@ -5,6 +5,7 @@
     port={{ item.split(':')[1] | default(27017) }}
     timeout=300
   with_items: mongodb_replset_servers
+  tags: wait-for-all
 
 - name: initiate or extend replica set
   mongodb_replset: >
